@@ -85,7 +85,9 @@ def get_market_price_change(
         f"Fetching market price change for {market} from {start_date} to {end_date}"
     )
 
-    if not validate_date_format(start_date) or not validate_date_format(end_date):
+    start_valid, _ = validate_date_format(start_date)
+    end_valid, _ = validate_date_format(end_date)
+    if not start_valid or not end_valid:
         return {
             "error": "Invalid date format. Use YYYYMMDD (e.g., '20240101').",
             "start_date": start_date,

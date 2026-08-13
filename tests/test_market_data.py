@@ -1,5 +1,7 @@
 """Tests for market-wide data tools."""
 
+from unittest.mock import patch
+
 from pykrx_mcp.tools.market_data import (
     get_market_ohlcv_by_date,
     get_market_price_change,
@@ -36,9 +38,11 @@ def test_get_market_price_change():
         assert "count" in result
 
 
-def test_get_market_price_change_invalid_date():
+@patch("pykrx_mcp.tools.market_data.stock")
+def test_get_market_price_change_invalid_date(mock_stock):
     """Test error handling for invalid date format."""
     result = get_market_price_change("2024-01-01", "20240105", "KOSPI")
 
     assert "error" in result
     assert "Invalid date" in result["error"]
+    mock_stock.get_market_price_change.assert_not_called()

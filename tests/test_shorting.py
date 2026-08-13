@@ -1,5 +1,7 @@
 """Tests for shorting data tools."""
 
+from unittest.mock import patch
+
 from pykrx_mcp.tools.shorting import (
     get_shorting_balance_top50,
     get_shorting_status_by_date,
@@ -26,12 +28,14 @@ def test_get_shorting_status_invalid_ticker():
     assert "Invalid ticker" in result["error"]
 
 
-def test_get_shorting_status_invalid_date():
+@patch("pykrx_mcp.tools.shorting.stock")
+def test_get_shorting_status_invalid_date(mock_stock):
     """Test error handling for invalid date format."""
     result = get_shorting_status_by_date("005930", "2024-01-01", "20240105")
 
     assert "error" in result
     assert "Invalid date" in result["error"]
+    mock_stock.get_shorting_status_by_date.assert_not_called()
 
 
 def test_get_shorting_volume_by_ticker():

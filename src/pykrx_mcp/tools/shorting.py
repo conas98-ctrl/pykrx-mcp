@@ -38,7 +38,9 @@ def get_shorting_status_by_date(
     if not validate_ticker(ticker):
         return {"error": "Invalid ticker format. Must be 6 digits.", "ticker": ticker}
 
-    if not validate_date_format(start_date) or not validate_date_format(end_date):
+    start_valid, _ = validate_date_format(start_date)
+    end_valid, _ = validate_date_format(end_date)
+    if not start_valid or not end_valid:
         return {
             "error": "Invalid date format. Use YYYYMMDD (e.g., '20240101').",
             "start_date": start_date,

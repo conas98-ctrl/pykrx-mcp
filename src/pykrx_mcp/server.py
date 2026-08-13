@@ -19,6 +19,9 @@ from .prompts import (
 )
 from .resources import get_krx_info, get_pykrx_manual
 from .tools import (
+    get_stock_analysis_bundle as get_stock_analysis_bundle_impl,
+)
+from .tools import (
     get_etf_ohlcv_by_date as get_etf_ohlcv_impl,
 )
 from .tools import (
@@ -196,6 +199,21 @@ def prompt_screen_undervalued_stocks(
 
 # ===== MCP Tools =====
 # Tools are callable functions that AI models can invoke
+
+
+@mcp.tool()
+def get_stock_analysis_bundle(
+    ticker: str,
+    start_date: str,
+    end_date: str,
+    adjusted: bool = True,
+    fields: list[str] | None = None,
+) -> dict:
+    """Fetch OHLCV first, then requested non-price groups in one KRX session."""
+
+    return get_stock_analysis_bundle_impl(
+        ticker, start_date, end_date, adjusted, fields
+    )
 
 
 @mcp.tool()
