@@ -13,6 +13,13 @@ from ..utils.validators import validate_date_format, validate_ticker
 logger = logging.getLogger(__name__)
 
 
+def _investor_frame_to_mapping(df: Any) -> dict[str, Any]:
+    """Serialize investor rows, aggregating repeated investor labels by meaning."""
+    if not df.index.is_unique:
+        df = df.groupby(level=0, sort=False).sum(min_count=1)
+    return {str(key): value for key, value in df.to_dict(orient="index").items()}
+
+
 @handle_pykrx_errors
 def get_market_trading_volume_by_investor(
     start_date: str, end_date: str, ticker: str, market: str = None
@@ -68,8 +75,7 @@ def get_market_trading_volume_by_investor(
         }
 
     # Convert to dict
-    result_dict = df.to_dict(orient="index")
-    formatted_dict = {str(k): v for k, v in result_dict.items()}
+    formatted_dict = _investor_frame_to_mapping(df)
 
     return {
         "ticker": ticker,
@@ -134,8 +140,7 @@ def get_market_trading_value_by_investor(
         }
 
     # Convert to dict
-    result_dict = df.to_dict(orient="index")
-    formatted_dict = {str(k): v for k, v in result_dict.items()}
+    formatted_dict = _investor_frame_to_mapping(df)
 
     return {
         "ticker": ticker,
